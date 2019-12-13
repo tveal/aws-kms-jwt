@@ -28,6 +28,10 @@
     "*.js": "eslint"
   },
   "pre-commit": "lint:staged",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tveal/aws-kms-jwt.git"
+  },
   "keywords": [
     "aws",
     "kms",
@@ -35,6 +39,10 @@
   ],
   "author": "TVeal",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tveal/aws-kms-jwt/issues"
+  },
+  "homepage": "https://github.com/tveal/aws-kms-jwt#readme",
   "dependencies": {
     "aws-sdk": "^2.587.0",
     "base64url": "^3.0.1",
