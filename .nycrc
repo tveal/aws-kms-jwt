@@ -1,0 +1,24 @@
+{
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "test/unit/**/*.test.js"
+    ],
+    "require": [],
+    "reporter": [
+      "text",
+      "lcov",
+      "html",
+      "text-summary"
+    ],
+    "sourceMap": false,
+    "instrument": false,
+    "cache": false,
+    "check-coverage": true,
+    "all": true
+}
