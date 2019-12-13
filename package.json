@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "AWS KMS Lib for signing/verifying JWT",
   "main": "./lib/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "babel src --out-dir lib",
     "clean": "rm -rf .nyc_output/ lib/ coverage/",
