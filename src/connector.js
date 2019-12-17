@@ -60,11 +60,6 @@ class Connector {
           if (err) throw err;
 
           const decryptedSig = base64url.decode(kmsData.Plaintext.toString('base64'));
-          // console.log('>>--->');
-          // console.log(kmsData);
-          // console.log(jwtData);
-          // console.log(decryptedSig);
-          // console.log(`${jwtData.encrypted.header}.${jwtData.encrypted.payload}`);
 
           if (decryptedSig === `${jwtData.encrypted.header}.${jwtData.encrypted.payload}`) {
             return resolve(jwtData.payload);
