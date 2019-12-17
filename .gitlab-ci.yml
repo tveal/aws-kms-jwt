@@ -1,0 +1,19 @@
+image: "node:8"
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm test
+
+deploy:
+  stage: deploy
+  only:
+    refs:
+      - master
+  script:
+    - echo "TODO - figure out npm version and publishing with GitLab CI"
