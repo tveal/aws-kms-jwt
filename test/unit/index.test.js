@@ -38,8 +38,13 @@ describe('index.js', () => {
   });
 
   it('should verify jwt', async () => {
-    const response = verifyJwt();
+    const jwt = { foo: 'bar' };
+    sinon.stub(Connector.prototype, 'verify')
+      .withArgs(jwt)
+      .returns(Promise.resolve(jwt));
 
-    expect(response).to.equal('TODO: implement JWT verify');
+    const response = await verifyJwt(jwt);
+
+    expect(response).to.deep.equal(jwt);
   });
 });
