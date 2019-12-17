@@ -5,11 +5,13 @@ stages:
   - deploy
 
 build:
+  stage: build
   script:
     - npm ci
     - npm test
 
 deploy:
+  stage: deploy
   only:
     refs:
       - master
