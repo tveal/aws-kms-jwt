@@ -7,6 +7,7 @@
       "src/**/*.js"
     ],
     "exclude": [
+      "test/int/**/*.test.js",
       "test/unit/**/*.test.js"
     ],
     "require": [],

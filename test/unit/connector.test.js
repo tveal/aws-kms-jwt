@@ -110,7 +110,7 @@ describe('connector.js', () => {
       const response = await new Connector(masterKeyAlias).verify(SIGNED_JWT);
 
       expect(spy).to.have.been.calledWith({
-        CiphertextBlob: Buffer.from(SIGNED_JWT.split('.')[2]),
+        CiphertextBlob: Buffer.from(SIGNED_JWT.split('.')[2], 'base64'),
       });
       expect(response).to.deep.equal({ foo: 'bar', iat: 10000000 });
     });
@@ -270,7 +270,7 @@ describe('connector.js', () => {
       const response = await new Connector(masterKeyAlias).verify(jwt);
 
       expect(spy).to.have.been.calledWith({
-        CiphertextBlob: Buffer.from(jwt.split('.')[2]),
+        CiphertextBlob: Buffer.from(jwt.split('.')[2], 'base64'),
       });
       expect(response).to.deep.equal({ foo: 'bar', iat, exp });
     });

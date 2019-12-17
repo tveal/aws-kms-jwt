@@ -55,7 +55,7 @@ class Connector {
         this._checkExpiration(jwtData.payload.exp);
 
         this.kms.decrypt({
-          CiphertextBlob: Buffer.from(jwtData.encrypted.signature),
+          CiphertextBlob: Buffer.from(jwtData.encrypted.signature, 'base64'),
         }, (err, kmsData) => {
           if (err) throw err;
 
