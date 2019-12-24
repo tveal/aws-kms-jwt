@@ -26,5 +26,5 @@ publish:
     - git config user.name "gitlab-ci"
     - git config user.email "none"
     - npm version patch -m "publishing %s [ci skip]"
-    - git push origin master --follow-tags
+    - git push origin HEAD:master --follow-tags
     - npm publish
