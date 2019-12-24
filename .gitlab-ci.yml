@@ -2,8 +2,7 @@ image: "node:8"
 
 stages:
   - build
-  - test
-  - deploy
+  - publish
 
 build:
   stage: build
@@ -17,18 +16,15 @@ build:
       - lib
     expire_in: 2 days
 
-test:
-  stage: test
-  script:
-    - ls -la
-    - git config -l
-    - git branch
-
-deploy:
-  stage: deploy
+publish:
+  stage: publish
   only:
     refs:
       - master
   script:
     - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
-    - echo "TODO - figure out npm version and publishing with GitLab CI"
+    - git config user.name "gitlab-ci"
+    - git config user.email "none"
+    - npm version patch -m "publishing %s [ci skip]"
+    - git push origin master --follow-tags
+    - npm publish
