@@ -1,3 +1,5 @@
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/tveal/aws-kms-jwt) 
+
 # AWS KMS JWT
 
 Goal: provide a library for JWT signing and verifying with a KMS CMK.
