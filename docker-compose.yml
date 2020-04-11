@@ -1,0 +1,13 @@
+version: '2'
+services:
+  git-server:
+    build: ./test/git-server/
+    image: git-local-server
+    volumes:
+      - ./test/git-server/seed-repos/:/git/seed-repos/
+    networks:
+      - jenkins
+    ports:
+      - '9418:9418'
+networks:
+  jenkins:

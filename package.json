@@ -1,0 +1,21 @@
+{
+  "name": "cf-deps",
+  "version": "1.0.0",
+  "description": "cli tool to generate and publish CloudFormation dependencies from yml files",
+  "bin": {
+    "cf-deps": "lib/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TVeal",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "clui": "^0.3.6",
+    "find-in-files": "^0.5.0",
+    "rimraf": "^3.0.2",
+    "simple-git": "^1.132.0",
+    "yargs": "^15.3.1"
+  }
+}
