@@ -28,18 +28,22 @@ If you build a new stack, say "stack-name-e", and run cf-deps in it's respective
 
 Be sure to checkout `cf-deps help`
 
-**With ENV Variables**
+**With ENV Variables** (Useful for CI/CD with n-number of stacks)
 ```
-CF_DEPS_REMOTE_GIT=<git-clone-url-for-storage-repo> \
-CF_DEPS_JSON_FILE=<json-file-to-store-deps-in> \
-    cf-deps
+export CF_DEPS_JSON_FILE="<json file to store deps in>"
+export CF_DEPS_REMOTE_GIT="<git clone url for storage repo>"
+export CF_DEPS_GIT_USR_NAME="<git user.name>"
+export CF_DEPS_GIT_USR_MAIL="<git user.email>"
+cf-deps
 ```
 
 **With CLI Options**
 ```
 cf-deps \
-    -r <git-clone-url-for-storage-repo> \
-    -f <json-file-to-store-deps-in>
+    -f <json file to store deps in> \
+    -r <git clone url for storage repo> \
+    -u <git user.name> \
+    -m <git user.email>
 ```
 
 ## Known Limitations
