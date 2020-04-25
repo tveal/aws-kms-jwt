@@ -1,6 +1,6 @@
 {
   "name": "cf-deps",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cli tool to generate and publish CloudFormation dependencies from yml files",
   "bin": {
     "cf-deps": "lib/index.js"
