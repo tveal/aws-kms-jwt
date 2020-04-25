@@ -1,0 +1,28 @@
+image: "node:12"
+
+stages:
+  - build
+  - publish
+
+build:
+  stage: build
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules
+      - lib
+    expire_in: 2 days
+
+publish:
+  stage: publish
+  only:
+    refs:
+      - master
+  script:
+    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+    - git config user.name "gitlab-ci"
+    - git config user.email "none"
+    - npm version patch -m "publishing %s [ci skip]"
+    - git push $PUSH_ORIGIN HEAD:master --follow-tags
+    - npm publish
