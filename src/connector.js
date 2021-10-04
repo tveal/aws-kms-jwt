@@ -40,7 +40,7 @@ class Connector {
       }, (err, data) => {
         if (err) return reject(err);
 
-        tokenParts.signature = data.CiphertextBlob.toString('base64');
+        tokenParts.signature = base64url(Buffer.from(data.CiphertextBlob));
         const token = `${tokenParts.header}.${tokenParts.payload}.${tokenParts.signature}`;
         return resolve(token);
       });
