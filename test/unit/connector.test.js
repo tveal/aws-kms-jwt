@@ -47,11 +47,12 @@ describe('connector.js', () => {
         ...payload,
         iat: Math.floor(now / 1000),
       }));
+      const expectedSignature = base64url(mockedSignature);
       expect(spy).to.have.been.calledWith({
         KeyId: masterKeyAlias,
         Plaintext: Buffer.from(`${base64Header}.${base64Payload}`),
       });
-      expect(response).to.deep.equal(`${base64Header}.${base64Payload}.${mockedSignature}`);
+      expect(response).to.deep.equal(`${base64Header}.${base64Payload}.${expectedSignature}`);
     });
 
     it('should sign jwt with expiration', async () => {
@@ -72,11 +73,12 @@ describe('connector.js', () => {
         iat: Math.floor(now / 1000),
         exp: Math.ceil(expires.getTime() / 1000),
       }));
+      const expectedSignature = base64url(mockedSignature);
       expect(spy).to.have.been.calledWith({
         KeyId: masterKeyAlias,
         Plaintext: Buffer.from(`${base64Header}.${base64Payload}`),
       });
-      expect(response).to.deep.equal(`${base64Header}.${base64Payload}.${mockedSignature}`);
+      expect(response).to.deep.equal(`${base64Header}.${base64Payload}.${expectedSignature}`);
     });
 
     it('should return error for failed KMS encryption', async () => {
