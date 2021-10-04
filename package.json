@@ -1,6 +1,6 @@
 {
   "name": "aws-kms-jwt",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "AWS KMS Lib for signing/verifying JWT",
   "main": "./lib/index.js",
   "files": [
