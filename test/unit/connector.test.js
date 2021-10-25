@@ -1,5 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
+import crypto from 'crypto';
 import * as sinon from 'sinon';
 import base64url from 'base64url';
 
@@ -81,6 +82,33 @@ describe('connector.js', () => {
       expect(response).to.deep.equal(`${base64Header}.${base64Payload}.${expectedSignature}`);
     });
 
+    it('should sign jwt with message digest', async () => {
+      const spy = sinon.spy((params, cb) => cb(null, {
+        CiphertextBlob: mockedSignature,
+        KeyId: 'arn:aws:kms:us-east-1:123456789012:key/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+      }));
+      AWS.mock('KMS', 'encrypt', spy);
+
+      const payload = { foo: 'jwt-payload' };
+
+      const response = await new Connector(masterKeyAlias).sign(payload, { useDigest: true });
+
+      // expected payload
+      const base64Payload = base64url(JSON.stringify({
+        ...payload,
+        iat: Math.floor(now / 1000),
+      }));
+      const expectedSignature = base64url(mockedSignature);
+      const tokenString = `${base64Header}.${base64Payload}`;
+      const digest = crypto.createHash('sha256').update(tokenString).digest('base64');
+
+      expect(spy).to.have.been.calledWith({
+        KeyId: masterKeyAlias,
+        Plaintext: Buffer.from(digest, 'base64'),
+      });
+      expect(response).to.deep.equal(`${base64Header}.${base64Payload}.${expectedSignature}`);
+    });
+
     it('should return error for failed KMS encryption', async () => {
       const spy = sinon.spy((params, cb) => cb({ msg: 'some failure message' }, {
         CiphertextBlob: mockedSignature,
@@ -117,6 +145,21 @@ describe('connector.js', () => {
       expect(response).to.deep.equal({ foo: 'bar', iat: 10000000 });
     });
 
+    it('should verify jwt with useDigest option', async () => {
+      const digest = crypto.createHash('sha256').update(base64url.decode(SIGNED_JWT.split('.')[2].toString('base64'))).digest('base64');
+      const spy = sinon.spy((params, cb) => cb(null, {
+        Plaintext: digest,
+      }));
+      AWS.mock('KMS', 'decrypt', spy);
+
+      const response = await new Connector(masterKeyAlias).verify(SIGNED_JWT, { useDigest: true });
+
+      expect(spy).to.have.been.calledWith({
+        CiphertextBlob: Buffer.from(SIGNED_JWT.split('.')[2], 'base64'),
+      });
+      expect(response).to.deep.equal({ foo: 'bar', iat: 10000000 });
+    });
+
     it('should fail to verify expired jwt', async () => {
       const spy = sinon.spy((params, cb) => cb(null, {
         Plaintext: SIGNED_JWT_WITH_EXP.split('.')[2],
@@ -142,6 +185,22 @@ describe('connector.js', () => {
       let expectedErr = null;
       try {
         await new Connector(masterKeyAlias).verify(SIGNED_JWT);
+      } catch (err) {
+        expectedErr = err;
+      }
+
+      expect(expectedErr.message).to.equal('Signature is NOT valid');
+    });
+
+    it('should NOT verify jwt for mismatch signature with useDigest option', async () => {
+      const spy = sinon.spy((params, cb) => cb(null, {
+        Plaintext: 'bad signature',
+      }));
+      AWS.mock('KMS', 'decrypt', spy);
+
+      let expectedErr = null;
+      try {
+        await new Connector(masterKeyAlias).verify(SIGNED_JWT, { useDigest: true });
       } catch (err) {
         expectedErr = err;
       }

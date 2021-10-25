@@ -24,10 +24,10 @@ This is a library to use with JavaScript source, not a CLI tool.
 const { signJwt, verifyJwt } = require('aws-kms-jwt');
 
 const main = async () => {
-    const signedToken = await signJwt({ foo: 'bar' }, process.env.CMK_ALIAS);
+    const signedToken = await signJwt({ foo: 'bar' }, process.env.CMK_ALIAS, { useDigest: true });  // optional useDigest flag to use message digest hashing for signing and verifying
     console.log(signedToken);
 
-    const verifiedToken = await verifyJwt(signedToken);
+    const verifiedToken = await verifyJwt(signedToken, { useDigest: true });
     console.log(verifiedToken);
 };
 

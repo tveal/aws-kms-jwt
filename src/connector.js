@@ -1,6 +1,6 @@
 import { KMS } from 'aws-sdk';
 import base64url from 'base64url';
-
+import crypto from 'crypto';
 import debug from './utils';
 
 class Connector {
@@ -34,8 +34,16 @@ class Connector {
         payload: base64url(JSON.stringify(payload)),
       };
 
+      let plaintext;
+      if (options.useDigest) {
+        const tokenString = `${tokenParts.header}.${tokenParts.payload}`;
+        const digest = crypto.createHash('sha256').update(tokenString).digest('base64');
+        plaintext = Buffer.from(digest, 'base64');
+      } else {
+        plaintext = Buffer.from(base64url(`${tokenParts.header}.${tokenParts.payload}`), 'base64');
+      }
       this.kms.encrypt({
-        Plaintext: Buffer.from(base64url(`${tokenParts.header}.${tokenParts.payload}`), 'base64'),
+        Plaintext: plaintext,
         KeyId: this.masterKeyAlias,
       }, (err, data) => {
         if (err) return reject(err);
@@ -47,7 +55,10 @@ class Connector {
     });
   }
 
-  verify(jwt) {
+  verify(jwt, options) {
+    if (!options) {
+      options = {};
+    }
     return new Promise((resolve, reject) => {
       try {
         const jwtData = this._getJwtData(jwt);
@@ -59,12 +70,22 @@ class Connector {
         }, (err, kmsData) => {
           if (err) throw err;
 
-          const decryptedSig = base64url.decode(kmsData.Plaintext.toString('base64'));
-
-          if (decryptedSig === `${jwtData.encrypted.header}.${jwtData.encrypted.payload}`) {
-            return resolve(jwtData.payload);
+          if (options.useDigest) {
+            const tokenString = `${jwtData.encrypted.header}.${jwtData.encrypted.payload}`;
+            const digest = crypto.createHash('sha256').update(tokenString).digest('base64');
+            const decryptedSig = kmsData.Plaintext.toString('base64');
+            if (decryptedSig === digest) {
+              return resolve(jwtData.payload);
+            } else {
+              throw new Error('Signature is NOT valid');
+            }
           } else {
-            throw new Error('Signature is NOT valid');
+            const decryptedSig = base64url.decode(kmsData.Plaintext.toString('base64'));
+            if (decryptedSig === `${jwtData.encrypted.header}.${jwtData.encrypted.payload}`) {
+              return resolve(jwtData.payload);
+            } else {
+              throw new Error('Signature is NOT valid');
+            }
           }
         });
       } catch (err) {

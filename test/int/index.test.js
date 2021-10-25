@@ -25,4 +25,11 @@ describe('index.js', () => {
 
     expect(verifiedToken.foo).equal('bar');
   });
+
+  it('should verify token signed with message digest', async () => {
+    const signedToken = await signJwt({ foo: 'bar' }, process.env.CMK_ALIAS, { useDigest: true });
+    const verifiedToken = await verifyJwt(signedToken, { useDigest: true });
+
+    expect(verifiedToken.foo).equal('bar');
+  });
 });
